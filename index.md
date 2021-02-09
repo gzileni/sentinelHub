@@ -1,37 +1,67 @@
-## Welcome to GitHub Pages
+# SENTINEL HUB
+package to access sentinel open data by Sentinel HUB
 
-You can use the [editor on GitHub](https://github.com/gzileni/sentinelHUB/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+## INSTALLATION
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```
+npm install --save sentinelHUB
+```
+or
+```
+yarn install sentinelHUB
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+## USAGE
 
-### Jekyll Themes
+### Get Authorization Token
+You must create OAuth Client by [Sentinel HUB Dashboard](https://www.sentinel-hub.com/) 
+```
+const sentinelHUB = require('sentinelHUB');
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/gzileni/sentinelHUB/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+sentinelHUB.getToken(clientID, clientSecret, (err, token) => {
+    ....
+});
 
-### Support or Contact
+```
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+### Get Blob Satellite's Image 
+
+```
+const sentinelHUB = require('sentinelHUB');
+
+const options = {
+    clientID: <YOUR CLIENT ID>, 
+    clientSecret: <YOUR CLIENT SECRET>,
+    evalscript: 'CO',
+    bbox: [13,45,15,47],
+    fromUTC: '2019-04-01T00:00:00Z',
+    toUTC: '2019-06-30T00:00:00Z',
+    width: 512,
+    height: 512
+};
+
+sentinelAPI.runProcess(options, (err, blob_image) => {
+    
+});
+
+```
+
+## [Evalscipts V3](https://docs.sentinel-hub.com/api/latest/evalscript/v3/)
+
+- NO2      [Nitrogen Dioxide](http://www.tropomi.eu/data-products/nitrogen-dioxide)
+- NO22     [Nitrogen Dioxide (NO2) script by Annamaria Luongo](https://custom-scripts.sentinel-hub.com/sentinel-5p/nitrogen_dioxide_tropospheric_column/)
+- SO2      [Sulfur Dioxide](http://www.tropomi.eu/data-products/sulphur-dioxide)
+- HCHO     [Formaldehyde](http://www.tropomi.eu/data-products/formaldehyde)
+- O3       [Ozone](http://www.tropomi.eu/data-products/total-ozone-column)
+- CH4      [Methane](http://www.tropomi.eu/data-products/methane)
+- AS1      [UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 340 nm and 380 nm](http://www.tropomi.eu/data-products/uv-aerosol-index)
+- AS2      [UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 354 nm and 388 nm](http://www.tropomi.eu/data-products/uv-aerosol-index)
+- CLOUD1   [Cloud base height](http://www.tropomi.eu/data-products/carbon-monoxide)
+- CLOUD2   [Cloud base pressure](http://www.tropomi.eu/data-products/carbon-monoxide)
+- CLOUD3   [Cloud optical thickness](http://www.tropomi.eu/data-products/carbon-monoxide)
+- CLOUD4   [Cloud top height](http://www.tropomi.eu/data-products/carbon-monoxide)
+- CLOUD5   [Cloud top pressure](http://www.tropomi.eu/data-products/carbon-monoxide)
+- CLOUD6   [Effective radiometric cloud fraction](http://www.tropomi.eu/data-products/carbon-monoxide)
+- CO        (default) [CARBON Monoxide](http://www.tropomi.eu/data-products/carbon-monoxide)
+
+
