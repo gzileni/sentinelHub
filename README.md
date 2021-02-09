@@ -39,8 +39,20 @@ const options = {
     height: 512
 };
 
+const tobase64 = false;
+
 sentinelAPI.runProcess(options, (err, blob_image) => {
-    
+    if (err == null) {
+        blob_image.arrayBuffer().then((buf) => {
+          if (tobase64) {
+            res.status(200).send(Buffer.from(buf).toString('base64')) 
+          } else {
+            res.status(200).send(Buffer.from(buf))
+          }
+        });
+    } else {
+        console.error(err)
+    }
 });
 
 ```
