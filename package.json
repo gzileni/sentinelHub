@@ -1,0 +1,32 @@
+{
+  "name": "sentinelhub",
+  "version": "1.0.1",
+  "description": "package to access sentinel open data by Sentinel HUB",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gzileni/sentinelHUB.git"
+  },
+  "keywords": [
+    "sentinel",
+    "opendata",
+    "nodejs",
+    "javascript"
+  ],
+  "author": "Giuseppe Zileni giuseppe.zileni@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gzileni/sentinelHUB/issues"
+  },
+  "homepage": "https://github.com/gzileni/sentinelHUB#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "form-data": "^3.0.0",
+    "logbootstrap": "^1.0.2",
+    "node-fetch": "^2.6.1",
+    "qs": "^6.9.6"
+  }
+}
