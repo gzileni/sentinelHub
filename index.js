@@ -44,17 +44,6 @@ async function getToken (clientID, clientSecret, callback) {
     })
 };
 
-// ----------------------------------------------------------------------------------------------------------
-// Requesting tokens
-async function getRateLimit (instance_id, callback) {
-  
-    await instance.get('/ogc/wms/' + instance_id).then((resp) => {
-        callback(null, JSON.stringify(resp.data));
-    }).catch((err) => {
-        callback(err, {});
-    })
-};
-
 function _getResponseText(res) {
     
     if (res.ok) { // res.status >= 200 && res.status < 300
@@ -63,18 +52,6 @@ function _getResponseText(res) {
         return res.statusText;
     }
 
-};
-
-let _getscript = (options, callback) => {
-
-    fetch(options.url + "/api/v1/process?evalscript=" + options.evalscript).then(_getResponseText).then(script => { 
-        log('success', 'OK Script.');
-        callback(null, script)
-    }).catch(error => {
-        log('error', 'ERROR GET SCRIPT ... ' + JSON.stringify(error))
-        callback(error, null);
-    });
-    
 };
 
 let _getRequest = (options) => {
@@ -111,57 +88,56 @@ let _getRequest = (options) => {
 
 let runProcess = (options, callback) => {
 
-    getToken(options.clientID, options.clientSecret, (err, token) => {
+    fetch(options.url + "/api/v1/sentinel/auth", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "clientID": options.clientID, 
+            "clientSecret": options.clientSecret
+        })
+    }).then(_getResponseText).then(token => {
+        
+        console.log('TOKEN: ' + JSON.stringify(token));
 
-        if (err == null) {
-            log('info', 'TOKEN: ' + JSON.stringify(token));
+        log('info', 'SCRIPT \n' + JSON.stringify(script));
 
-            _getscript(options, (err, script) => {
+        let request = _getRequest(options);
+        log('info', 'REQUEST \n' + request);
 
-                if (err == null) {
+        const body = new FormData;
+        body.append('request', request);
+        body.append("evalscript", script);
 
-                    log('info', 'SCRIPT \n' + JSON.stringify(script));
-        
-                    let request = _getRequest(options);
-                    log('info', 'REQUEST \n' + request);
-        
-                    const body = new FormData;
-                    body.append('request', request);
-                    body.append("evalscript", script);
-        
-                    var headers = {
-                        "Authorization": "Bearer " + token,
-                        'Content-Type': `multipart/form-data; boundary=${body._boundary}`,
-                        "Accept-Encoding": "gzip, deflate, br",
-                        "Accept": "*/*",
-                        "Connection": "keep-alive"
-                    };
-        
-                    var requestOptions = {
-                        method: 'POST',
-                        body: body,
-                        redirect: 'follow',
-                        headers: headers
-                    };
-                    
-                    fetch("https://creodias.sentinel-hub.com/api/v1/process", requestOptions)
-                    .then(response => response.blob())
-                    .then(result => callback(null, result))
-                    .catch(error => callback(error, null));
-                } else {
-                    callback(err, null);
-                }
-            })
-        } else {
-            callback(err, null);
-        }
-        
-    })
+        var headers = {
+            "Authorization": "Bearer " + token,
+            'Content-Type': `multipart/form-data; boundary=${body._boundary}`,
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept": "*/*",
+            "Connection": "keep-alive"
+        };
+
+        var requestOptions = {
+            method: 'POST',
+            body: body,
+            redirect: 'follow',
+            headers: headers
+        };
+            
+        fetch("https://creodias.sentinel-hub.com/api/v1/process", requestOptions)
+        .then(response => response.blob())
+        .then(result => callback(null, result))
+        .catch(error => callback(error, null));
+    
+    }).catch(error => {
+        log('error', 'ERROR GET TOKEN ... ' + JSON.stringify(error))
+        callback(error, null);
+    });
 
 };
 
 module.exports = {
     getToken,
-    getRateLimit,
     runProcess
 }

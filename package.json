@@ -1,6 +1,6 @@
 {
   "name": "sentinelhub",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "package to access sentinel open data by Sentinel HUB",
   "main": "index.js",
   "scripts": {
