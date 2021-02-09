@@ -33,25 +33,13 @@ async function getToken (clientID, clientSecret, callback) {
       grant_type: "client_credentials"
     });
 
-    // log('info', 'Request TOKEN by ' + JSON.stringify(body))
-  
-    await instance.post("/oauth/token", body, config).then((resp) => {
+    await instance.post("/oauth/token", body, config).then(resp => {
         log('info', 'get token OK.');
         callback(null, resp.data.access_token);
     }).catch(err => {
         log('error', 'Error TOKEN -> ' + JSON.stringify(err))
         callback(err, '');
     })
-};
-
-function _getResponseText(res) {
-    
-    if (res.ok) { // res.status >= 200 && res.status < 300
-        return res.text();
-    } else {
-        return res.statusText;
-    }
-
 };
 
 let _getRequest = (options) => {
@@ -86,54 +74,35 @@ let _getRequest = (options) => {
 
 }
 
+// Get Image
 let runProcess = (options, callback) => {
 
-    fetch(options.url + "/api/v1/sentinel/auth", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            "clientID": options.clientID, 
-            "clientSecret": options.clientSecret
-        })
-    }).then(_getResponseText).then(token => {
+    let request = _getRequest(options);
+    log('info', 'REQUEST \n' + request);
+
+    const body = new FormData;
+    body.append('request', request);
+    body.append("evalscript", options.evalscript);
+
+    var headers = {
+        "Authorization": "Bearer " + options.token,
+        'Content-Type': `multipart/form-data; boundary=${body._boundary}`,
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept": "*/*",
+        "Connection": "keep-alive"
+    };
+
+    var requestOptions = {
+        method: 'POST',
+        body: body,
+        redirect: 'follow',
+        headers: headers
+    };
         
-        console.log('TOKEN: ' + JSON.stringify(token));
-
-        log('info', 'SCRIPT \n' + JSON.stringify(script));
-
-        let request = _getRequest(options);
-        log('info', 'REQUEST \n' + request);
-
-        const body = new FormData;
-        body.append('request', request);
-        body.append("evalscript", script);
-
-        var headers = {
-            "Authorization": "Bearer " + token,
-            'Content-Type': `multipart/form-data; boundary=${body._boundary}`,
-            "Accept-Encoding": "gzip, deflate, br",
-            "Accept": "*/*",
-            "Connection": "keep-alive"
-        };
-
-        var requestOptions = {
-            method: 'POST',
-            body: body,
-            redirect: 'follow',
-            headers: headers
-        };
-            
-        fetch("https://creodias.sentinel-hub.com/api/v1/process", requestOptions)
-        .then(response => response.blob())
-        .then(result => callback(null, result))
-        .catch(error => callback(error, null));
-    
-    }).catch(error => {
-        log('error', 'ERROR GET TOKEN ... ' + JSON.stringify(error))
-        callback(error, null);
-    });
+    fetch("https://creodias.sentinel-hub.com/api/v1/process", requestOptions)
+    .then(response => response.blob())
+    .then(result => callback(null, result))
+    .catch(error => callback(error, null));
 
 };
 

@@ -4,11 +4,11 @@ package to access sentinel open data by Sentinel HUB
 ## INSTALLATION
 
 ```
-npm install --save sentinelHUB
+npm install --save sentinelhub
 ```
 or
 ```
-yarn install sentinelHUB
+yarn install sentinelhub
 ```
 
 ## USAGE
@@ -16,7 +16,7 @@ yarn install sentinelHUB
 ### Get Authorization Token
 You must create OAuth Client by [Sentinel HUB Dashboard](https://www.sentinel-hub.com/) 
 ```
-const sentinelHUB = require('sentinelHUB');
+const sentinelhub = require('sentinelhub');
 
 sentinelHUB.getToken(clientID, clientSecret, (err, token) => {
     ....
@@ -27,11 +27,10 @@ sentinelHUB.getToken(clientID, clientSecret, (err, token) => {
 ### Get Blob Satellite's Image 
 
 ```
-const sentinelHUB = require('sentinelHUB');
+const sentinelhub = require('sentinelhub');
 
 const options = {
-    clientID: <YOUR CLIENT ID>, 
-    clientSecret: <YOUR CLIENT SECRET>,
+    token: <YOUR OAUTH TOKEN>, 
     evalscript: <custom evalscript v3>,
     bbox: [13,45,15,47],
     fromUTC: '2019-04-01T00:00:00Z',
