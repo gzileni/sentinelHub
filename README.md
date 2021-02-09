@@ -45,9 +45,9 @@ sentinelAPI.runProcess(options, (err, blob_image) => {
     if (err == null) {
         blob_image.arrayBuffer().then((buf) => {
           if (tobase64) {
-            res.status(200).send(Buffer.from(buf).toString('base64')) 
+            return Buffer.from(buf).toString('base64');
           } else {
-            res.status(200).send(Buffer.from(buf))
+            return Buffer.from(buf);
           }
         });
     } else {
